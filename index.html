@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="reset.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="row bg-light p-5 rounded-lg m-3">
+      <h1 class="display-4">Search for a City</h1>
+      <hr>
+      <form>
+        <div>
+          <input type="text" class="form-control" id="city">
+        </div>
+        <button id="searchow" type="submit" class="btn btn-primary mt-1">🔍</button>
+      </form>
+      <div class="dropdown mt-2">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+        Cities
+        </button>
+        <ul class="dropdown-menu" id="cityList" aria-labelledby="dropdownMenuButton1">     
+        </ul>
+      </div>
+    </div>
+    <!-- Make an area to append to -->
+    <div id="weather1" class="row bg-light p-5 rounded-lg m-3 weatherDisp">
+      <h1>No city weather data to display</h1>
+    </div>
+    <h1>5-Day Forecast:</h1>    
+    <div id="weather2" class="row bg-light p-5 rounded-lg m-3 forcDisp">
+      <h1>No 5 day forecast to display</h1>
+    </div>
+
+  <!-- Axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <!-- Bootstrap -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+  <!-- <script src="app.js"></script> -->
+  <script>
+    // let city = []
+    // const saved = JSON.parse(localStorage.getItem('saved')) || []
+    let cityHs = []
+
+    document.getElementById('searchow').addEventListener('click', event =>{
+      
+      event.preventDefault()
+      //Set an empty array to hold the city names
+      
+      const search = document.getElementById('city').value
+      axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${search}&appid=3c67bd85a6417d0cddce2bb7e49a58b2&units=imperial`)
+      .then(res => {
+      
+      let weatherDat = res.data
+      let lat = weatherDat.coord.lat
+      let lon = weatherDat.coord.lon
+      let uvDat
+      nameAdd(weatherDat.name)
+      nameLs()
+
+      axios.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=3c67bd85a6417d0cddce2bb7e49a58b2&units=imperial`)
+      .then(res => {
+      uvDat = res.data
+      document.getElementById('weather1').innerHTML = ''
+      const weatherElem = document.createElement('div')
+      weatherElem.className = 'card col-sm-3 gif bg-dark' 
+      weatherElem.innerHTML = `
+        <img
+          src="https://openweathermap.org/img/wn/${weatherDat.weather[0].icon}.png"
+          class="card-img-top">
+        <div class="card-body">
+          <p class="text-white card-text">${weatherDat.name}</p>
+          <h5 class="text-white card-title">${weatherDat.weather[0].main}</h5>
+          <p class="text-white card-text">Temperature: ${weatherDat.main.temp} °F</p>
+          <p class="text-white card-text">Humidity: ${weatherDat.main.humidity}</p>
+          <p class="text-white card-text">Wind speed: ${weatherDat.wind.speed}mph</p>
+          <p class="text-white card-text">UV rating: ${uvDat.current.uvi}mph</p>
+        </div>`
+      document.getElementById('city').value = ''
+      document.getElementById('weather1').append(weatherElem)
+
+      var date = new Date()
+
+
+      document.getElementById('weather2').innerHTML = ''
+      const forcElem1 = document.createElement('div')
+      const forcElem2 = document.createElement('div')
+      const forcElem3 = document.createElement('div')
+      const forcElem4 = document.createElement('div')
+      const forcElem5 = document.createElement('div')
+
+      forcElem1.className = 'card col-sm-3 gif bg-dark m-4'
+      forcElem2.className = 'card col-sm-3 gif bg-dark m-4'
+      forcElem3.className = 'card col-sm-3 gif bg-dark m-4'
+      forcElem4.className = 'card col-sm-3 gif bg-dark m-4'
+      forcElem5.className = 'card col-sm-3 gif bg-dark m-4'
+
+      forcElem1.innerHTML = `<img
+          src="https://openweathermap.org/img/wn/${uvDat.daily[0].weather[0].icon}.png"
+          class="card-img-top">
+          <div class="card-body">
+            <p class="text-white card-text">${date.getMonth()+1}/${date.getDate()}</p>
+            <h5 class="text-white card-title">${uvDat.daily[0].weather[0].main}</h5>
+            <p class="text-white card-text">Temperature:${uvDat.daily[0].temp.day} °F</p>
+            <p class="text-white card-text">Humidity: ${uvDat.daily[0].humidity}</p>
+          </div>`
+      
+      forcElem2.innerHTML = `<img
+          src="https://openweathermap.org/img/wn/${uvDat.daily[1].weather[0].icon}.png"
+          class="card-img-top">
+          <div class="card-body">
+            <p class="text-white card-text">${date.getMonth()+1}/${(date.getDate() + 1)}</p>
+            <h5 class="text-white card-title">${uvDat.daily[1].weather[0].main}</h5>
+            <p class="text-white card-text">Temperature: ${uvDat.daily[1].temp.day} °F</p>
+            <p class="text-white card-text">Humidity: ${uvDat.daily[1].humidity}</p>
+          </div>`
+
+      forcElem3.innerHTML = `<img
+          src="https://openweathermap.org/img/wn/${uvDat.daily[2].weather[0].icon}.png"
+          class="card-img-top">
+          <div class="card-body">
+            <p class="text-white card-text">${date.getMonth()+1}/${(date.getDate() + 2)}</p>
+            <h5 class="text-white card-title">${uvDat.daily[2].weather[0].main}</h5>
+            <p class="text-white card-text">Temperature: ${uvDat.daily[2].temp.day} °F</p>
+            <p class="text-white card-text">Humidity: ${uvDat.daily[2].humidity}</p>
+          </div>`
+      forcElem4.innerHTML = `<img
+          src="https://openweathermap.org/img/wn/${uvDat.daily[3].weather[0].icon}.png"
+          class="card-img-top">
+          <div class="card-body">
+            <p class="text-white card-text">${date.getMonth()+1}/${(date.getDate() + 3)}</p>
+            <h5 class="text-white card-title">${uvDat.daily[3].weather[0].main}</h5>
+            <p class="text-white card-text">Temperature: ${uvDat.daily[3].temp.day} °F</p>
+            <p class="text-white card-text">Humidity: ${uvDat.daily[3].humidity}</p>
+          </div>`
+      
+      forcElem5.innerHTML = `<img
+          src="https://openweathermap.org/img/wn/${uvDat.daily[4].weather[0].icon}.png"
+          class="card-img-top">
+          <div class="card-body">
+            <p class="text-white card-text">${date.getMonth()+1}/${(date.getDate() + 4)}</p>
+            <h5 class="text-white card-title">${uvDat.daily[4].weather[0].main}</h5>
+            <p class="text-white card-text">Temperature: ${uvDat.daily[4].temp.day} °F</p>
+            <p class="text-white card-text">Humidity: ${uvDat.daily[4].humidity}</p>
+          </div>`
+
+      document.getElementById('weather2').append(forcElem1)
+      document.getElementById('weather2').append(forcElem2)
+      document.getElementById('weather2').append(forcElem3)
+      document.getElementById('weather2').append(forcElem4)
+      document.getElementById('weather2').append(forcElem5)
+      
+      })
+      
+      })
+    .catch(err => console.error(err))
+    })
+    
+    //Make fucntion to append to cities array with param cities
+    function nameAdd(cities){
+      //Push cities argument to cityHs array
+			cityHs.push(cities)
+      //Weather dat value with store in cityHs array in local storage at 'cities' key
+      localStorage.setItem('cities',JSON.stringify(cityHs))
+		}
+
+    function nameLs(){
+      
+      cities = JSON.parse(localStorage.getItem('cities'))
+      for(i=0;i<cities.length;i++){
+        let listElem = document.createElement('li')
+        listElem.innerHTML = `<a class="dropdown-item" id=${cities[i]} href="#">${cities[i]}</a>`
+        document.getElementById('cityList').append(listElem)
+      }
+    }
+ 
+  </script>
+</body>
+</html>
