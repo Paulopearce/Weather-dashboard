@@ -45,7 +45,13 @@
   <script>
     // let city = []
     // const saved = JSON.parse(localStorage.getItem('saved')) || []
+    let listApp = document.getElementById('cityList')
+    
     let cityHs = []
+    
+    //Append to list when you load screen
+    nameLs()
+    
 
     document.getElementById('searchow').addEventListener('click', event =>{
       
@@ -170,14 +176,18 @@
 		}
 
     function nameLs(){
+      //empty list before appending to array
+      listApp.innerHTML = ''
+      let cityHis = JSON.parse(localStorage.getItem('cities'))
       
-      cities = JSON.parse(localStorage.getItem('cities'))
-      for(i=0;i<cities.length;i++){
+      for(i=0;i<cityHis.length;i++){
+        
         let listElem = document.createElement('li')
-        listElem.innerHTML = `<a class="dropdown-item" id=${cities[i]} href="#">${cities[i]}</a>`
-        document.getElementById('cityList').append(listElem)
+        listElem.innerHTML = `<a class="dropdown-item" id=${cityHis[i]} href="#">${cityHis[i]}</a>`
+        listApp.append(listElem)
       }
     }
+    
   </script>
 </body>
 </html>
