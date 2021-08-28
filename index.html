@@ -36,6 +36,7 @@
     <div id="weather2" class="row bg-light p-5 rounded-lg m-3 forcDisp">
       <h1 class="text-center">No 5 day forecast to display</h1>
     </div>
+  </div>
 
   <!-- Axios -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -45,25 +46,48 @@
   <script>
     // let city = []
     // const saved = JSON.parse(localStorage.getItem('saved')) || []
-    let listApp = document.getElementById('cityList')
-    
+    let listApp = document.getElementById('cityList') 
     let cityHs = JSON.parse(localStorage.getItem('cities')) || []
-    
     //Clear current list then append to list when you load screen
     nameLs()
-
     //Get last city by making array cityNameArr by parsing LocalStorage and making an element to hold the value of most recent search then looping through parsed local storage array cityNameArr and setting it to the variable last city search by looping through the array and setting the value to the index of array until it reaches the end of the array using i < cityNameArr.length
-    let cityNameArr = JSON.parse(localStorage.getItem('cities')) ||[]
+    let cityNameArr = JSON.parse(localStorage.getItem('cities')) || []
     let lastCitySearch
     for (let i = 0; i < cityNameArr.length; i++) {
       lastCitySearch = cityNameArr[i];
     }
-
     //Load page with last search result in localStorage if there's anything in localstorage by checking localStorage in cityNameArr array
     if(cityNameArr.length>=1){
       refreshWeatherLoad(lastCitySearch)
     }
     
+    document.getElementById('searchow').addEventListener('click', event =>{
+      weatherLoad()
+    })
+    
+    //Make fucntion to append to cities array with param cities
+    function nameAdd(cities){
+      //Push cities argument to cityHs array
+			cityHs.push(cities)
+      //Weather dat value with store in cityHs array in local storage at 'cities' key
+      localStorage.setItem('cities',JSON.stringify(cityHs))
+		}
+
+    function nameLs(){
+      //empty list before appending to array
+      listApp.innerHTML = ''
+      //set array to values of local storage
+      let cityHis = JSON.parse(localStorage.getItem('cities')) || []
+      
+      if (cityHis.length>=1) {
+        for(i=0;i<cityHis.length;i++){
+          let listElem = document.createElement('li')
+          listElem.innerHTML = `<a class="dropdown-item" id=${cityHis[i]} href="#">${cityHis[i]}</a>`
+          listApp.append(listElem)
+        }
+      }
+    }
+       
     function refreshWeatherLoad(lastCityVar) {
       //Set an empty array to hold the city names
       
@@ -94,10 +118,26 @@
           <p class="text-white card-text">Temperature: ${weatherDat.main.temp} °F</p>
           <p class="text-white card-text">Humidity: ${weatherDat.main.humidity}</p>
           <p class="text-white card-text">Wind speed: ${weatherDat.wind.speed}mph</p>
-          <p class="text-white card-text">UV rating: ${uvDat.current.uvi}</p>
+          <p id="uvCoFresh" class="text-white card-text">UV rating: ${uvDat.current.uvi}</p>
         </div>`
       document.getElementById('city').value = ''
       document.getElementById('weather1').append(weatherElem)
+
+      if (uvDat.current.uvi < 3 ) {
+        document.getElementById('uvCoFresh').style.backgroundColor = "green";
+      }
+      if (uvDat.current.uvi >= 3 && uvDat.current.uvi < 6 ) {
+        document.getElementById('uvCoFresh').style.backgroundColor = "yellow";
+      }
+      if (uvDat.current.uvi >= 6 && uvDat.current.uvi < 8 ) {
+        document.getElementById('uvCoFresh').style.backgroundColor = "orange";
+      }
+      if (uvDat.current.uvi >= 8 && uvDat.current.uvi < 11 ) {
+        document.getElementById('uvCoFresh').style.backgroundColor = "red";
+      }
+      if (uvDat.current.uvi >= 11 ) {
+        document.getElementById('uvCoFresh').style.backgroundColor = "red";
+      }
 
       var date = new Date()
 
@@ -207,10 +247,26 @@
           <p class="text-white card-text">Temperature: ${weatherDat.main.temp} °F</p>
           <p class="text-white card-text">Humidity: ${weatherDat.main.humidity}</p>
           <p class="text-white card-text">Wind speed: ${weatherDat.wind.speed}mph</p>
-          <p class="text-white card-text">UV rating: ${uvDat.current.uvi}</p>
+          <p id="uvCo" class="text-white card-text">UV rating: ${uvDat.current.uvi}</p>
         </div>`
       document.getElementById('city').value = ''
       document.getElementById('weather1').append(weatherElem)
+
+      if (uvDat.current.uvi < 3 ) {
+        document.getElementById('uvCo').style.backgroundColor = "green";
+      }
+      if (uvDat.current.uvi >= 3 && uvDat.current.uvi < 6 ) {
+        document.getElementById('uvCo').style.backgroundColor = "yellow";
+      }
+      if (uvDat.current.uvi >= 6 && uvDat.current.uvi < 8 ) {
+        document.getElementById('uvCo').style.backgroundColor = "orange";
+      }
+      if (uvDat.current.uvi >= 8 && uvDat.current.uvi < 11 ) {
+        document.getElementById('uvCo').style.backgroundColor = "red";
+      }
+      if (uvDat.current.uvi >= 11 ) {
+        document.getElementById('uvCo').style.backgroundColor = "red";
+      }
 
       var date = new Date()
 
@@ -287,34 +343,6 @@
       
       })
     .catch(err => console.error(err))
-    }
-
-
-    document.getElementById('searchow').addEventListener('click', event =>{
-      weatherLoad()
-    })
-    
-    //Make fucntion to append to cities array with param cities
-    function nameAdd(cities){
-      //Push cities argument to cityHs array
-			cityHs.push(cities)
-      //Weather dat value with store in cityHs array in local storage at 'cities' key
-      localStorage.setItem('cities',JSON.stringify(cityHs))
-		}
-
-    function nameLs(){
-      //empty list before appending to array
-      listApp.innerHTML = ''
-      //set array to values of local storage
-      let cityHis = JSON.parse(localStorage.getItem('cities')) || []
-      
-      if (cityHis.length>=1) {
-        for(i=0;i<cityHis.length;i++){
-          let listElem = document.createElement('li')
-          listElem.innerHTML = `<a class="dropdown-item" id=${cityHis[i]} href="#">${cityHis[i]}</a>`
-          listApp.append(listElem)
-        }
-      }
     }
     
   </script>
