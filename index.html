@@ -47,7 +47,7 @@
     // const saved = JSON.parse(localStorage.getItem('saved')) || []
     let listApp = document.getElementById('cityList')
     
-    let cityHs = []
+    let cityHs = JSON.parse(localStorage.getItem('cities')) || []
     
     //Clear current list then append to list when you load screen
     nameLs()
@@ -59,7 +59,7 @@
       lastCitySearch = cityNameArr[i];
     }
 
-    //Load page with last search result in localStorage
+    //Load page with last search result in localStorage if there's anything in localstorage by checking localStorage in cityNameArr array
     if(cityNameArr.length>=1){
       refreshWeatherLoad(lastCitySearch)
     }
@@ -75,7 +75,7 @@
       let lat = weatherDat.coord.lat
       let lon = weatherDat.coord.lon
       let uvDat
-      nameAdd(weatherDat.name)
+      
       nameLs()
 
       axios.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=3c67bd85a6417d0cddce2bb7e49a58b2&units=imperial`)
@@ -94,7 +94,7 @@
           <p class="text-white card-text">Temperature: ${weatherDat.main.temp} °F</p>
           <p class="text-white card-text">Humidity: ${weatherDat.main.humidity}</p>
           <p class="text-white card-text">Wind speed: ${weatherDat.wind.speed}mph</p>
-          <p class="text-white card-text">UV rating: ${uvDat.current.uvi}mph</p>
+          <p class="text-white card-text">UV rating: ${uvDat.current.uvi}</p>
         </div>`
       document.getElementById('city').value = ''
       document.getElementById('weather1').append(weatherElem)
@@ -207,7 +207,7 @@
           <p class="text-white card-text">Temperature: ${weatherDat.main.temp} °F</p>
           <p class="text-white card-text">Humidity: ${weatherDat.main.humidity}</p>
           <p class="text-white card-text">Wind speed: ${weatherDat.wind.speed}mph</p>
-          <p class="text-white card-text">UV rating: ${uvDat.current.uvi}mph</p>
+          <p class="text-white card-text">UV rating: ${uvDat.current.uvi}</p>
         </div>`
       document.getElementById('city').value = ''
       document.getElementById('weather1').append(weatherElem)
@@ -305,7 +305,7 @@
     function nameLs(){
       //empty list before appending to array
       listApp.innerHTML = ''
-      //set arrray to values of local storage
+      //set array to values of local storage
       let cityHis = JSON.parse(localStorage.getItem('cities')) || []
       
       if (cityHis.length>=1) {
