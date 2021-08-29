@@ -60,6 +60,7 @@
     if(cityNameArr.length>=1){
       refreshWeatherLoad(lastCitySearch)
     }
+
     
     document.getElementById('searchow').addEventListener('click', event =>{
       weatherLoad()
@@ -83,7 +84,7 @@
         for(i=0;i<cityHis.length;i++){
           let listElem = document.createElement('li')
           listElem.innerHTML = `<a class="dropdown-item" id=${cityHis[i]} href="#">${cityHis[i]}</a>`
-          listApp.append(listElem)
+          listApp.prepend(listElem)
         }
       }
     }
